@@ -1,18 +1,32 @@
 "use client";
 
-import { p } from "@starknet-react/core/dist/index-DOtHQdsr";
-import src from "daisyui";
+import { useAccount } from "@starknet-react/core";
 import type { NextPage } from "next";
-import { type } from "os";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 
 const Home: NextPage = () => {
+  const { address, isConnected } = useAccount();
+
+  const { data: balanceData, isLoading } = useScaffoldReadContract({
+    contractName: "Eth",
+    functionName: "balance_of",
+    args: [address],
+    enabled: isConnected,
+  });
+
   return (
     <>
       <div className="flex items-center justify-center gap-3 flex-grow pt-10">
         <div className="card bg-base-100 w-96 shadow-xl">
           <div className="card-body">
             <h2 className="card-title">Read ETH Balance Demo</h2>
-            <p>XXXXXXX ETH</p>
+            {!isConnected && <p>Wallet is not connected!</p>}
+            {isConnected &&
+              (isLoading ? (
+                <p>Loading...</p>
+              ) : (
+                <p>{Number(balanceData || 0n) / 10 ** 18} ETH</p>
+              ))}
           </div>
         </div>
         <div className="card bg-base-100 w-96 shadow-xl">
