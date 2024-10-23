@@ -2,9 +2,14 @@
 
 import { useAccount } from "@starknet-react/core";
 import type { NextPage } from "next";
+import { useState } from "react";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
+import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 
 const Home: NextPage = () => {
+  const [transferAmount, setTransferAmount] = useState(0);
+  const [targetAddress, setTargetAddress] = useState("");
+
   const { address, isConnected } = useAccount();
 
   const { data: balanceData, isLoading } = useScaffoldReadContract({
@@ -12,6 +17,12 @@ const Home: NextPage = () => {
     functionName: "balance_of",
     args: [address],
     enabled: isConnected,
+  });
+
+  const { sendAsync: transfer } = useScaffoldWriteContract({
+    contractName: "Eth",
+    functionName: "transfer",
+    args: [targetAddress, transferAmount * 10 ** 18],
   });
 
   return (
@@ -37,14 +48,18 @@ const Home: NextPage = () => {
                 type="text"
                 placeholder="Destination"
                 className="input input-bordered w-full max-w-xs"
+                onChange={(e) => setTargetAddress(e.target.value)}
               />
               <input
                 type="number"
                 step="0.001"
                 placeholder="Amount in ETH"
                 className="input input-bordered w-full max-w-xs"
+                onChange={(e) => setTransferAmount(Number(e.target.value))}
               />
-              <button className="btn btn-primary">Send</button>
+              <button className="btn btn-primary" onClick={() => transfer()}>
+                Send
+              </button>
             </div>
           </div>
         </div>
