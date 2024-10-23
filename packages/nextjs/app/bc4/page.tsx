@@ -1,8 +1,10 @@
 "use client";
 
 import { useAccount } from "@starknet-react/core";
+import { table } from "console";
 import type { NextPage } from "next";
 import { useState } from "react";
+import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 import { useScaffoldMultiWriteContract } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
@@ -79,6 +81,31 @@ const Home: NextPage = () => {
               >
                 Send
               </button>
+            </div>
+          </div>
+        </div>
+        <div className="card bg-base-100 w-96 shadow-xl">
+          <div className="card-body">
+            <h2 className="card-title">Event listener on transfer</h2>
+            <div className="flex flex-col gap-2">
+              <table className="table">
+                {/* head */}
+                <thead>
+                  <tr>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* row 1 */}
+                  <tr>
+                    <td>XXXXX</td>
+                    <td>XXXXX</td>
+                    <td>XXXXX ETH</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
