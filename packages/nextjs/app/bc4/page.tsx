@@ -3,6 +3,7 @@
 import { useAccount } from "@starknet-react/core";
 import type { NextPage } from "next";
 import { useState } from "react";
+import { useScaffoldMultiWriteContract } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-stark/useScaffoldWriteContract";
 
@@ -23,6 +24,21 @@ const Home: NextPage = () => {
     contractName: "Eth",
     functionName: "transfer",
     args: [targetAddress, transferAmount * 10 ** 18],
+  });
+
+  const { sendAsync: approveAndTransfer } = useScaffoldMultiWriteContract({
+    calls: [
+      {
+        contractName: "Eth",
+        functionName: "approve",
+        args: [targetAddress, transferAmount * 10 ** 18],
+      },
+      {
+        contractName: "Eth",
+        functionName: "transfer",
+        args: [targetAddress, transferAmount * 10 ** 18],
+      },
+    ],
   });
 
   return (
@@ -57,7 +73,10 @@ const Home: NextPage = () => {
                 className="input input-bordered w-full max-w-xs"
                 onChange={(e) => setTransferAmount(Number(e.target.value))}
               />
-              <button className="btn btn-primary" onClick={() => transfer()}>
+              <button
+                className="btn btn-primary"
+                onClick={() => approveAndTransfer()}
+              >
                 Send
               </button>
             </div>
