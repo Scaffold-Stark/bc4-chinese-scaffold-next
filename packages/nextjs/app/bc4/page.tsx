@@ -4,6 +4,7 @@ import { useAccount } from "@starknet-react/core";
 import { table } from "console";
 import type { NextPage } from "next";
 import { useState } from "react";
+import { Address } from "~~/components/scaffold-stark";
 import { useScaffoldEventHistory } from "~~/hooks/scaffold-stark/useScaffoldEventHistory";
 import { useScaffoldMultiWriteContract } from "~~/hooks/scaffold-stark/useScaffoldMultiWriteContract";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-stark/useScaffoldReadContract";
@@ -42,6 +43,14 @@ const Home: NextPage = () => {
       },
     ],
   });
+
+  const { data: transferEvents } = useScaffoldEventHistory({
+    contractName: "Eth",
+    eventName: "openzeppelin::token::erc20_v070::erc20::ERC20::Transfer",
+    fromBlock: 255671n,
+  });
+
+  console.log({ transferEvents });
 
   return (
     <>
@@ -98,12 +107,22 @@ const Home: NextPage = () => {
                   </tr>
                 </thead>
                 <tbody>
+                  {transferEvents
+                    ?.filter((event) => event.args.from === address)
+                    .map((event, index) => {
+                      return (
+                        <tr key={index}>
+                          <td>
+                            <Address address={event.args.from}></Address>
+                          </td>
+                          <td>
+                            <Address address={event.args.to}></Address>
+                          </td>
+                          <td>{Number(event.args.value) / 10 ** 18} ETH</td>
+                        </tr>
+                      );
+                    })}
                   {/* row 1 */}
-                  <tr>
-                    <td>XXXXX</td>
-                    <td>XXXXX</td>
-                    <td>XXXXX ETH</td>
-                  </tr>
                 </tbody>
               </table>
             </div>
